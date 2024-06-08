@@ -3,6 +3,7 @@ services:
   proxy:
     image: jwilder/nginx-proxy
     container_name: proxy
+    restart: always
     labels:
       com-github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: "true"
     ports:
@@ -11,19 +12,22 @@ services:
     volumes:
       - certs:/etc/nginx/certs
       - vhostd:/etc/nginx/vhost.d
-      - html:/usr/share/nginx/html
       - /var/run/docker.sock:/tmp/docker.sock
+    networks:
+      - web
 
   letsencrypt:
     image: jrcs/letsencrypt-nginx-proxy-companion
     container_name: letsencrypt
+    restart: always
     environment:
       - NGINX_PROXY_CONTAINER=proxy
     volumes:
       - certs:/etc/nginx/certs
       - vhostd:/etc/nginx/vhost.d
-      - html:/usr/share/nginx/html
       - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - web
 
   node-test:
     build:
@@ -47,6 +51,8 @@ services:
     ports:
       - "3000:3000"
     command: npm run dev
+    networks:
+      - web
 
   mysql:
     build:
@@ -63,6 +69,8 @@ services:
       - mysql_data:/var/lib/mysql
     ports:
       - "3306:3306"
+    networks:
+      - web
 
   postgres:
     build:
@@ -78,10 +86,14 @@ services:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    networks:
+      - web
+
+networks:
+  web:
 
 volumes:
   certs:
-  html:
   vhostd:
   mysql_data:
   postgres_data:
