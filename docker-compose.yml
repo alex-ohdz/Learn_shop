@@ -64,8 +64,24 @@ services:
     ports:
       - "3306:3306"
 
+  postgres:
+    build:
+      context: .
+      dockerfile: sql/Dockerfile.postgres
+    image: postgres:custom
+    container_name: postgres-learn-shop
+    environment:
+      - POSTGRES_PASSWORD=rootpassword
+      - POSTGRES_DB=mydatabase
+      - POSTGRES_USER=myuser
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
 volumes:
   certs:
   html:
   vhostd:
   mysql_data:
+  postgres_data:

@@ -1,0 +1,15 @@
+# Dockerfile.postgres
+FROM postgres:latest
+
+# Create a database, change as needed
+ENV POSTGRES_DB=mydatabase
+
+# Create a user and set a password, change as needed
+ENV POSTGRES_USER=myuser
+ENV POSTGRES_PASSWORD=mypassword
+
+# Copy the schema.sql file to the docker-entrypoint-initdb.d directory
+COPY /sql/pg_schema.sql /docker-entrypoint-initdb.d/
+
+# Expose port 5432
+EXPOSE 5432
